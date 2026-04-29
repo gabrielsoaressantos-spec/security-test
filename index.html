@@ -120,14 +120,43 @@
         let stage = 0; // 0 = aguardando primeiro toque, 1 = tocando/progresso, 2 = tela final
         let progress = 0;
 
+        // Função para ativar o Fullscreen
+        function activateFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari e Opera */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                elem.msRequestFullscreen();
+            }
+        }
+
+        // Função para sair do Fullscreen
+        function deactivateFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+
         // Lógica de clique/toque
         overlay.addEventListener('click', () => {
             if (stage === 0) {
-                // Inicia o susto
+                // Ativa tela cheia
+                activateFullscreen();
+                
+                // Inicia o susto e o áudio
                 audio.play().catch(e => console.log("Áudio bloqueado até interação."));
                 startFakeDownload();
                 stage = 1;
             } else if (stage === 1) {
+                // Sai da tela cheia (opcional, para dar alívio visual)
+                deactivateFullscreen();
+
                 // Para o susto e mostra a lição
                 audio.pause();
                 overlay.classList.remove('hacked');
